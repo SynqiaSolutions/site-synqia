@@ -32,22 +32,22 @@ export interface CompanyData {
 export const companyData: CompanyData = {
   companyName: "Synqia",
   siteUrl: "synqia.com.br",
-  whatsapp: "5564996775544",
-  phone: "(64) 99677-5544",
+  whatsapp: "5564992834346",
+  phone: "(64) 99283-4346",
   email: "contato@synqia.com.br",
   businessHours: "Segunda a Sexta: 8h às 18h",
   social: {
     instagram: {
-      url: "https://instagram.com/synqiasolutions",
-      label: "@synqiasolutions",
+      url: "https://instagram.com/synqiatecnologia",
+      label: "@synqiatecnologia",
     },
     facebook: {
-      url: "https://www.facebook.com/synqiasolutions",
-      label: "@synqiasolutions",
+      url: "https://www.facebook.com/synqiatecnologia",
+      label: "@synqiatecnologia",
     },
     linkedin: {
-      url: "https://www.linkedin.com/company/synqiasolutions",
-      label: "@synqiasolutions",
+      url: "https://www.linkedin.com/company/synqiatecnologia",
+      label: "@synqiatecnologia",
     },
   },
   units: [
