@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { heroContent } from "@/data/homeContentData";
 import { companyData } from "@/data/companyData";
 import { cn } from "@/lib/utils";
+import WhatsAppLink from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppUrl, WHATSAPP_MESSAGES } from "@/lib/whatsapp";
 
 export default function HeroSection() {
@@ -74,7 +75,12 @@ export default function HeroSection() {
               size="lg"
               className="group h-12 w-full px-6 text-[15px] shadow-md sm:w-auto"
               render={
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />
+                <WhatsAppLink
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  trackLocation="hero-home"
+                />
               }
             >
               <MessageCircle className="size-4" aria-hidden />

@@ -4,6 +4,7 @@ import { Clock, Mail, MapPin, MessageCircle } from "lucide-react";
 import SocialLinks from "@/components/shared/SocialLinks";
 import { companyData } from "@/data/companyData";
 import { getRegionalSeoLinks } from "@/data/seoLocalData";
+import WhatsAppLink from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppUrl, WHATSAPP_MESSAGES } from "@/lib/whatsapp";
 
 const linksRapidos = [
@@ -120,10 +121,11 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               <li>
-                <a
+                <WhatsAppLink
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  trackLocation="footer"
                   className="flex items-start gap-3 text-muted-foreground text-sm font-body hover:text-primary transition-colors"
                 >
                   <MessageCircle
@@ -136,7 +138,7 @@ export default function Footer() {
                     </span>
                     {companyData.phone}
                   </span>
-                </a>
+                </WhatsAppLink>
               </li>
               <li>
                 <a

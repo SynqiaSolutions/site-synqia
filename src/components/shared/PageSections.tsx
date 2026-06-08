@@ -2,6 +2,7 @@
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Reveal from "@/components/shared/Reveal";
+import WhatsAppLink from "@/components/shared/WhatsAppLink";
 import { companyData } from "@/data/companyData";
 import { buildWhatsAppUrl, WHATSAPP_MESSAGES } from "@/lib/whatsapp";
 
@@ -37,6 +38,8 @@ interface PageHeroProps {
   /** Href do CTA secundário. */
   ctaSecundarioHref?: string;
   whatsappMessage?: string;
+  /** Identificador para rastreamento de cliques no WhatsApp (GA4). */
+  whatsappTrackLocation?: string;
 }
 
 export function PageHero({
@@ -49,6 +52,7 @@ export function PageHero({
   ctaSecundarioLabel = "Solicitar análise técnica",
   ctaSecundarioHref = "/#contato",
   whatsappMessage = WHATSAPP_MESSAGES.diagnostico,
+  whatsappTrackLocation = "page-hero",
 }: PageHeroProps) {
   const Heading = as;
   const whatsappUrl = buildWhatsAppUrl(companyData.whatsapp, whatsappMessage);
@@ -76,7 +80,12 @@ export function PageHero({
               size="lg"
               className="group h-12 w-full px-6 text-[15px] shadow-[0_0_0_1px_rgba(6,182,212,0.4),0_12px_40px_-12px_rgba(6,182,212,0.55)] sm:w-auto"
               render={
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />
+                <WhatsAppLink
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  trackLocation={whatsappTrackLocation}
+                />
               }
             >
               <MessageCircle className="size-4" aria-hidden />
@@ -107,6 +116,8 @@ interface CtaWhatsappSectionProps {
   botao?: string;
   message?: string;
   id?: string;
+  /** Identificador para rastreamento de cliques no WhatsApp (GA4). */
+  whatsappTrackLocation?: string;
 }
 
 export default function CtaWhatsappSection({
@@ -115,8 +126,10 @@ export default function CtaWhatsappSection({
   botao = "Falar com um especialista",
   message = WHATSAPP_MESSAGES.default,
   id,
+  whatsappTrackLocation,
 }: CtaWhatsappSectionProps) {
   const whatsappUrl = buildWhatsAppUrl(companyData.whatsapp, message);
+  const trackLocation = whatsappTrackLocation ?? id ?? "cta-whatsapp";
 
   return (
     <section id={id} className="relative overflow-hidden py-24 md:py-32">
@@ -144,11 +157,12 @@ export default function CtaWhatsappSection({
               size="lg"
               className="group h-12 w-full px-6 text-[15px] shadow-xl sm:w-auto"
               render={
-                <a
+                <WhatsAppLink
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={botao}
+                  trackLocation={trackLocation}
                 />
               }
             >

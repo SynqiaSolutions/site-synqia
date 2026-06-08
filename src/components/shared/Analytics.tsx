@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import {
   hasOptionalConsent,
   COOKIE_CONSENT_UPDATED_EVENT,
 } from "@/lib/cookieConsent";
+import { trackPageView } from "@/lib/analytics";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
@@ -71,6 +73,8 @@ function runAnalytics(): void {
  */
 export default function Analytics() {
   const loaded = useRef(false);
+  const prevPath = useRef<string | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const load = () => {
@@ -85,6 +89,16 @@ export default function Analytics() {
     window.addEventListener(COOKIE_CONSENT_UPDATED_EVENT, load);
     return () => window.removeEventListener(COOKIE_CONSENT_UPDATED_EVENT, load);
   }, []);
+
+  useEffect(() => {
+    if (!hasOptionalConsent()) return;
+    const path =
+      pathname +
+      (typeof window !== "undefined" ? window.location.search : "");
+    if (prevPath.current === path) return;
+    if (prevPath.current !== null) trackPageView(path);
+    prevPath.current = path;
+  }, [pathname]);
 
   return null;
 }

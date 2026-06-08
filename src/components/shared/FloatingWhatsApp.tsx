@@ -6,6 +6,7 @@ import {
   COOKIE_CONSENT_UPDATED_EVENT,
   getStoredConsent,
 } from "@/lib/cookieConsent";
+import WhatsAppLink from "@/components/shared/WhatsAppLink";
 import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const DEFAULT_MESSAGE =
@@ -55,11 +56,12 @@ export default function FloatingWhatsApp() {
       )}
 
       {/* Botão */}
-      <a
+      <WhatsAppLink
         href={url}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Abrir conversa no WhatsApp"
+        trackLocation="floating"
         className="group relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-[#25D366]/40 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95 sm:h-16 sm:w-16"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -86,7 +88,7 @@ export default function FloatingWhatsApp() {
           }}
           aria-hidden
         />
-      </a>
+      </WhatsAppLink>
     </div>
   );
 }

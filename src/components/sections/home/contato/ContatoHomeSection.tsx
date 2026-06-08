@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Send,
   Loader2,
@@ -9,14 +10,16 @@ import {
   Mail,
   MapPin,
   CheckCircle2,
-  ExternalLink,
   Instagram,
 } from "lucide-react";
 import Reveal from "../../shared/Reveal";
 import { Button } from "@/components/ui/button";
 import SocialLinks from "@/components/shared/SocialLinks";
+import WhatsAppLink from "@/components/shared/WhatsAppLink";
 import { companyData } from "@/data/companyData";
 import { buildWhatsAppUrl, WHATSAPP_MESSAGES } from "@/lib/whatsapp";
+import { storeContatoWhatsAppMessage } from "@/lib/contatoLead";
+import { trackLeadFormSubmit } from "@/lib/analytics";
 
 const STORAGE_KEY = "synqia_contato_leads";
 const HONEYPOT_NAME = "website_url";
@@ -46,9 +49,9 @@ const garantias = [
 ];
 
 export default function ContatoHomeSection() {
+  const router = useRouter();
   const [form, setForm] = useState<ContatoForm>(INITIAL_FORM);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   const whatsappUrl = buildWhatsAppUrl(
     companyData.whatsapp,
@@ -85,14 +88,10 @@ export default function ContatoHomeSection() {
       /* storage indisponível */
     }
 
-    window.open(
-      buildWhatsAppUrl(companyData.whatsapp, message),
-      "_blank",
-      "noopener,noreferrer"
-    );
+    storeContatoWhatsAppMessage(message);
+    trackLeadFormSubmit();
     setIsSubmitting(false);
-    setSubmitted(true);
-    setForm(INITIAL_FORM);
+    router.push("/contato-enviado");
   };
 
   return (
@@ -175,29 +174,6 @@ export default function ContatoHomeSection() {
           {/* Formulário */}
           <Reveal delay={0.1}>
             <div className="glass rounded-3xl p-6 md:p-8">
-              {submitted ? (
-                <div className="flex flex-col items-center justify-center gap-4 py-10 text-center">
-                  <span className="flex size-16 items-center justify-center rounded-full bg-primary/15">
-                    <CheckCircle2 className="size-8 text-primary" aria-hidden />
-                  </span>
-                  <div>
-                    <p className="font-heading text-lg font-bold text-foreground">
-                      Mensagem enviada!
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Continue a conversa no WhatsApp que acabou de abrir.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSubmitted(false)}
-                    className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-                  >
-                    Enviar outra mensagem
-                    <ExternalLink className="size-3.5" aria-hidden />
-                  </button>
-                </div>
-              ) : (
                 <form onSubmit={handleSubmit} className="relative">
                   <div className="sr-only" aria-hidden>
                     <label htmlFor={HONEYPOT_NAME}>Deixe em branco</label>
@@ -287,8 +263,8 @@ export default function ContatoHomeSection() {
                   </div>
 
                   <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                    Ao enviar, você será redirecionado ao WhatsApp e concorda
-                    com a{" "}
+                    Ao enviar, você será direcionado à página de confirmação e
+                    poderá continuar no WhatsApp. Ao prosseguir, concorda com a{" "}
                     <Link
                       href="/politica-de-privacidade"
                       className="text-primary hover:underline"
@@ -317,7 +293,6 @@ export default function ContatoHomeSection() {
                     )}
                   </Button>
                 </form>
-              )}
 
               <div className="mt-6 border-t border-hairline pt-6 flex flex-col items-center justify-center">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">
@@ -342,13 +317,42 @@ interface ChannelRowProps {
 }
 
 function ChannelRow({ icon, label, value, href, external }: ChannelRowProps) {
+  const className =
+    "group flex items-center gap-3 rounded-xl border border-hairline bg-card/30 p-3.5 transition-colors hover:border-primary/40 hover:bg-card/60";
+
+  if (external && label === "WhatsApp") {
+    return (
+      <WhatsAppLink
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        trackLocation="contato-canal"
+        className={className}
+      >
+        <ChannelRowContent icon={icon} label={label} value={value} />
+      </WhatsAppLink>
+    );
+  }
+
   return (
     <a
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="group flex items-center gap-3 rounded-xl border border-hairline bg-card/30 p-3.5 transition-colors hover:border-primary/40 hover:bg-card/60"
+      className={className}
     >
+      <ChannelRowContent icon={icon} label={label} value={value} />
+    </a>
+  );
+}
+
+function ChannelRowContent({
+  icon,
+  label,
+  value,
+}: Pick<ChannelRowProps, "icon" | "label" | "value">) {
+  return (
+    <>
       <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
         {icon}
       </span>
@@ -358,7 +362,7 @@ function ChannelRow({ icon, label, value, href, external }: ChannelRowProps) {
         </span>
         <span className="block truncate text-sm text-foreground">{value}</span>
       </span>
-    </a>
+    </>
   );
 }
 
