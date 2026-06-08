@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { companyData } from "@/data/companyData";
+import {
+  COOKIE_CONSENT_UPDATED_EVENT,
+  getStoredConsent,
+} from "@/lib/cookieConsent";
 import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const DEFAULT_MESSAGE =
@@ -10,9 +14,19 @@ const DEFAULT_MESSAGE =
 export default function FloatingWhatsApp() {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [hasConsent, setHasConsent] = useState(false);
   const [url, setUrl] = useState(() =>
     buildWhatsAppUrl(companyData.whatsapp, DEFAULT_MESSAGE)
   );
+
+  useEffect(() => {
+    const syncConsent = () => setHasConsent(getStoredConsent() !== null);
+
+    syncConsent();
+    window.addEventListener(COOKIE_CONSENT_UPDATED_EVENT, syncConsent);
+    return () =>
+      window.removeEventListener(COOKIE_CONSENT_UPDATED_EVENT, syncConsent);
+  }, []);
 
   useEffect(() => {
     const message = buildWhatsAppMessage(
@@ -25,6 +39,8 @@ export default function FloatingWhatsApp() {
   }, []);
 
   const showTooltip = hovered || focused;
+
+  if (!hasConsent) return null;
 
   return (
     <div className="fixed bottom-6 right-4 z-110 flex flex-col items-end gap-2 sm:bottom-8 sm:right-6 md:right-8">

@@ -10,7 +10,6 @@ import {
   type CookieConsentState,
 } from "@/lib/cookieConsent";
 
-
 function setStoredConsent(essential: boolean, optional: boolean): void {
   try {
     localStorage.setItem(
@@ -61,31 +60,32 @@ export default function CookieConsent() {
     <div
       role="dialog"
       aria-label="Preferências de cookies"
-      className="fixed bottom-0 left-0 right-0 z-100 border-t border-border bg-background p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+      aria-live="polite"
+      className="animate-in fade-in slide-in-from-bottom-3 fixed bottom-6 left-4 z-100 w-[calc(100vw-2rem)] max-w-sm duration-500 sm:bottom-8 sm:left-6 md:left-8"
     >
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-muted-foreground text-sm font-body leading-relaxed">
-          Utilizamos cookies para garantir o funcionamento do site e, com sua
-          autorização, para melhorar sua experiência (conforme a LGPD). Você
-          pode aceitar apenas os essenciais ou todos.{" "}
+      <div className="rounded-2xl border border-border/60 bg-background/75 p-3.5 shadow-lg ring-1 ring-border/40 backdrop-blur-xl sm:p-4">
+        <p className="font-body text-xs leading-relaxed text-muted-foreground sm:text-sm">
+          Usamos cookies essenciais e, com sua autorização, para melhorar sua
+          experiência.{" "}
           <Link
             href="/cookies"
-            className="text-primary underline underline-offset-2 hover:no-underline"
+            className="text-foreground/80 underline decoration-border/80 underline-offset-2 transition-colors hover:text-primary hover:decoration-primary"
           >
-            Entenda sobre cookies
+            Saiba mais
           </Link>
         </p>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button type="button" size="default" onClick={acceptAll}>
-            Aceitar cookies
-          </Button>
+        <div className="mt-3 flex items-center justify-end gap-1.5">
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="xs"
+            className="text-muted-foreground hover:text-foreground"
             onClick={acceptEssentialOnly}
           >
-            Aceitar essenciais
+            Apenas essenciais
+          </Button>
+          <Button type="button" size="sm" onClick={acceptAll}>
+            Aceitar
           </Button>
         </div>
       </div>
